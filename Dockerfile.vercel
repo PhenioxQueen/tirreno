@@ -4,9 +4,12 @@ FROM php:8.3-apache
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libcurl4-openssl-dev \
-    libonig-dev \
     unzip \
-    && docker-php-ext-install pdo_pgsql curl mbstring \
+    && docker-php-ext-install \
+       pdo_pgsql \
+       pgsql \
+       curl \
+       mbstring \
     && a2enmod rewrite headers \
     && sed -ri 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf \
     && rm -rf /var/lib/apt/lists/*
@@ -23,7 +26,7 @@ RUN composer install \
     --prefer-dist \
     --optimize-autoloader
 
-ENV PORT=80
+RUN echo "memory_limit=256M" > /usr/local/etc/php/conf.d/tirreno.ini
 
 EXPOSE 80
 
